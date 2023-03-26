@@ -68,12 +68,12 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       # Your job code here
-      -run:
-         name: Run the Backend Unit Test
-         command: |
-           cd backend
-           npm instanll
-           npm run test
+      - run:
+          name: Run the Backend Unit Test
+          command: |
+            cd backend
+            npm instanll
+            npm run test
 
 
 workflows:
