@@ -2,7 +2,7 @@ version: 2.1
 
 jobs:
 # BUILD PHASE
-# Build the Frontend server
+# Build the Frontend Project
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -20,7 +20,7 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
 
-# Build the Backend server
+# Build the Backend Project
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -39,7 +39,7 @@ jobs:
           key: backend-build
 
 # TEST PHASE
-# Unit Test for Frontend server of Udapeople
+# Unit Test for Frontend Project
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -90,13 +90,13 @@ jobs:
             - frontend-build
       # Your job code here
       - run:
-          name: Lint Frontend Udapeople
+          name: Lint Frontend Project
           command: |
             cd frontend
             npm install
             npm audit --audit-level=critical
 
-# Lint Backend server to check the vulnerabilities
+# Lint Backend Project to check the vulnerabilities
   scan-backend:
     docker:
       # Docker image here
@@ -109,7 +109,7 @@ jobs:
           keys: [backend-build]
       # Your job code here
       - run:
-          name: Lint Backend Udapeople
+          name: Lint Backend Project
           command: |
             cd backend
             npm install
