@@ -174,7 +174,7 @@ jobs:
       # Here's where you will add some code to rollback on failure 
       - destroy-environment    
 
-# EC2 setup for backend 
+# install python on EC2 in backend 
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
@@ -209,25 +209,27 @@ jobs:
 workflows:
   default:
     jobs:
-  #    - build-frontend
-  #    - build-backend
-  #    - test-frontend:
-  #        requires:
-  #          - build-frontend
-  #    - test-backend:
-  #        requires:
-  #          - build-backend
-  #    - scan-frontend:
-  #        requires:
-  #          - build-frontend
-  #          - test-frontend
-  #    - scan-backend:
-  #        requires:
-  #          - build-backend
-  #          - test-backend
-  #    - deploy-infrastructure:
-  #        requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+            - test-frontend
+      - scan-backend:
+          requires:
+            - build-backend
+            - test-backend
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
         #  filters:
         #    branches:
         #      only: [circleci-project-setup]        
-      - configure-infrastructure
+      - configure-infrastructure:
+          requires: 
+            - deploy-infrastructure
