@@ -13,7 +13,29 @@ commands:
             # Your code here
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-            # exit 1
+
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      # Add parameter here     
+    steps:
+      - run:
+          name: Revert migrations
+          # Add when this will run
+          when: on_fail
+          command: |
+            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS = curl --insecure https://kvdb.io/7WiHpCzcMEdPsf8WM8TxHb/migration_${CIRCLE_WORKFLOW_ID:0:7}
+            if(( $SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+            #  Add revert code here. You can find this in the Getting Started section.
+              npm run migrations:revert
+            fi  
+
+
+
 jobs:
 # BUILD PHASE
 # Build the Frontend Project
@@ -209,31 +231,62 @@ jobs:
       # Here's where you will add some code to rollback on failure 
     #  - destroy-environment     
 
+  run-migrations:
+    docker:
+      # Docker image here that supports NodeJS
+      - image: circleci/node:13.8.0
+    steps:
+      # Checkout code from git
+      - checkout
+      # Restore from cache
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Run migrations
+          command: |
+            # Your code here
+            cd backend
+            npm install
+            # Run and save the migration output
+		        npm run migrations > migrations_dump.txt
+      - run:
+          name: Send migration results to memstash
+          command: |
+            # Your code here
+ 		        if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+ 		        then
+ 			        curl https://kvdb.io/7WiHpCzcMEdPsf8WM8TxHb/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+     	      fi
+     # Here's where you will add some code to rollback on failure 
+     -  revert-migartion
+     -  destroy-environment
 
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-            - test-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-            - test-backend
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+    #  - build-frontend
+    #  - build-backend
+    #  - test-frontend:
+    #      requires:
+    #        - build-frontend
+    #  - test-backend:
+    #      requires:
+    #        - build-backend
+    #  - scan-frontend:
+    #      requires:
+    #        - build-frontend
+    #        - test-frontend
+    #  - scan-backend:
+    #      requires:
+    #        - build-backend
+    #        - test-backend
+    #  - deploy-infrastructure:
+    #      requires: [test-frontend, test-backend, scan-frontend, scan-backend]
         #  filters:
         #    branches:
         #      only: [circleci-project-setup]        
-      - configure-infrastructure:
-          requires: 
-            - deploy-infrastructure
+    #  - configure-infrastructure:
+    #      requires: 
+    #        - deploy-infrastructure
+      - run-migrations
+    #      requires: [configure-infrastructure]
