@@ -297,10 +297,10 @@ jobs:
           at: ~/
             
       - run:
-          name: Install dependencies ansible
+          name: Install dependencies nodejs
           command: |
             # your code here
-            yum install -y ansible
+            yum install -y nodejs
 
       - run:
           name: Install dependencies awscli
