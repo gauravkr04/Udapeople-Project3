@@ -282,7 +282,7 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image:  amazon/aws-cli
+      - image:  python:3.11-rc-alpine
     steps:
       # Checkout code from git
       - checkout 
@@ -291,16 +291,28 @@ jobs:
           name: Install dependencies tar and gzip
           command: |
             # your code here
-            yum install -y tar gzip
+            apk add --update tar gzip
 
       - attach_workspace:
           at: ~/
             
       - run:
-          name: Install dependencies nodejs
+          name: Install dependencies ansible
           command: |
             # your code here
-            yum install -y nodejs
+            apk add --update ansible
+            
+      - run:
+          name: Install dependencies npm
+          command: |
+            # your code here
+            apk add --update npm
+            
+      - run:
+          name: Install dependencies curl
+          command: |
+            # your code here
+            apk add --update curl
 
       - run:
           name: Install dependencies awscli
