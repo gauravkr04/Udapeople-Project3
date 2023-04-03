@@ -300,7 +300,7 @@ jobs:
           name: Install dependencies ansible
           command: |
             # your code here
-            apk add --update ansible
+            yum install -y ansible
 
       - run:
           name: Install dependencies awscli
