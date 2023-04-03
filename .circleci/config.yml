@@ -155,6 +155,10 @@ jobs:
 ## STEPS FOR CONTINUOUS DEPLOYMENT STARTS FROM HERE ##
 ######################################################
 
+#****************************************************#
+#             1. INFRASTRUCTURE PHASE                #
+#****************************************************#
+
 # Steps to deploy the infrastructure 
   deploy-infrastructure:
     docker:
@@ -199,7 +203,7 @@ jobs:
       # Here's where you will add some code to rollback on failure 
       - destroy-environment    
 
-# install python on EC2 in backend 
+# Configure Infrastructure - Setting up EC2 instance as backend
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
@@ -214,6 +218,7 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
+
       - run:
           name: Install dependencies
           command: |
@@ -222,15 +227,24 @@ jobs:
             apk add --update ansible
             pip install awscli 
             # exit 1
+
       - run:
           name: Configure server
           command: |
             # Your code here
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
+
       # Here's where you will add some code to rollback on failure 
     #  - destroy-environment     
 
+
+#****************************************************#
+#                2. DEPLOY PHASE                     #
+#****************************************************#
+
+
+# Database Migration
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
@@ -263,34 +277,92 @@ jobs:
       - revert-migrations
       - destroy-environment
 
+# Deploy Frontend
+  deploy-frontend:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image:  amazon/awscli
+    steps:
+      # Checkout code from git
+      - checkout 
+
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: Install dependencies tar and gzip
+          command: |
+            # your code here
+            apk add tar gzip
+            
+      - run:
+          name: Install dependencies ansible
+          command: |
+            # your code here
+            apk add --update ansible
+
+      - run:
+          name: Install dependencies awscli
+          command: |
+            # your code here
+            pip install awscli
+
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            export BACKEND_IP=$(aws ec2 describe-instances --filter "Name=tag:project,Values=udapeople" --query Reservations[*].Instances[*].PublicIpAddress --output text)
+            echo "${BACKEND_IP}"
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            
+      # Here's where you will add some code to rollback on failure 
+            # your code here
+      - revert-migrations
+      - destroy-environment      
+
+
+
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-            - test-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-            - test-backend
-      - deploy-infrastructure:
-          requires: 
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires: 
-            - deploy-infrastructure
-      - run-migrations:
-          requires: 
-            - configure-infrastructure
+    #  - build-frontend
+    #  - build-backend
+    #  - test-frontend:
+    #      requires:
+    #        - build-frontend
+    #  - test-backend:
+    #      requires:
+    #        - build-backend
+    #  - scan-frontend:
+    #      requires:
+    #        - build-frontend
+    #        - test-frontend
+    #  - scan-backend:
+    #     requires:
+    #        - build-backend
+    #        - test-backend
+    #  - deploy-infrastructure:
+    #      requires: 
+    #        - test-frontend
+    #        - test-backend
+    #        - scan-frontend
+    #        - scan-backend
+    #  - configure-infrastructure:
+    #      requires: 
+    #        - deploy-infrastructure
+    #  - run-migrations:
+    #      requires: 
+    #        - configure-infrastructure
+      - deploy-frontend
+    #      requires: 
+    #        - run-migrations
