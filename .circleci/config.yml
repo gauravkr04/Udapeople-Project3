@@ -281,7 +281,7 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image:  amazon/awscli
+      - image:  amazon/aws-cli
     steps:
       # Checkout code from git
       - checkout 
@@ -315,6 +315,8 @@ jobs:
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
+            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
             
       - run:
           name: Deploy frontend objects
