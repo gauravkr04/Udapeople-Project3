@@ -1,0 +1,61 @@
+---
+- name: "update apt package"
+  become: true
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: true
+  apt:
+    upgrade: yes
+
+- name: "remove dependencies that are not required"
+  become: true
+  apt:
+    autoremove: true
+
+- name: "Install nodeJs"
+  become: true
+  apt:
+    name: ["nodejs"]
+    state: latest
+    update_cache: yes
+
+- name: "Install NPM"
+  become: true
+  apt:
+    name: ["npm"]
+    state: latest
+    update_cache: yes
+
+- name: "Install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: "Create a new directory"
+  file:
+    path: /home/ubuntu/backend
+    state: directory
+
+- name: 'Copy backend build to server'
+  template:
+    src: /root/project/backend
+    dest: /home/ubuntu
+
+- name: "Install Dependencies"
+  shell: |
+    cd /home/ubuntu/backend
+    npm install
+
+- name: "Build Package"
+  shell: |
+    cd /home/ubuntu/backend
+    npm run build
+
+- name: "start web server"
+  shell: |
+    pm2 start npm -- start
