@@ -393,7 +393,7 @@ jobs:
             npm run build
             mkdir /tmp/backendcp/
             # Zip the backend file
-            tar -czvf /tmp/backendcp/backend.tar.gz
+            tar -C backend -czvf /tmp/backendcp/backend.tar.gz
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
