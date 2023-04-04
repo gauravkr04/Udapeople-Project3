@@ -379,6 +379,11 @@ jobs:
             pip install awscli
 
       - run:
+          name: Set env
+          command: |
+            echo ENVIROMENT=$ENVIROMENT > "backend/.env"
+
+      - run:
           name: Deploy backend
           command: |
             # your code here
@@ -386,10 +391,6 @@ jobs:
             npm i
             npm run build
             cd ..
-            cd backend/dist
-            echo "insdie backend/dist folder"
-            # Zip the directory
-            tar -czvf backend.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -403,37 +404,37 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-            - test-frontend
-      - scan-backend:
-         requires:
-            - build-backend
-            - test-backend
-      - deploy-infrastructure:
-          requires: 
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires: 
-            - deploy-infrastructure
-      - run-migrations:
-          requires: 
-            - configure-infrastructure
-      - deploy-frontend:
-          requires: 
-            - run-migrations
-      - deploy-backend:
-          requires: 
-            - run-migrations
+    #  - build-frontend
+    #  - build-backend
+    #  - test-frontend:
+    #      requires:
+    #        - build-frontend
+    #  - test-backend:
+    #      requires:
+    #        - build-backend
+    #  - scan-frontend:
+    #      requires:
+    #        - build-frontend
+    #        - test-frontend
+    #  - scan-backend:
+    #     requires:
+    #        - build-backend
+    #        - test-backend
+    #  - deploy-infrastructure:
+    #      requires: 
+    #        - test-frontend
+    #        - test-backend
+    #        - scan-frontend
+    #        - scan-backend
+    #  - configure-infrastructure:
+    #      requires: 
+    #        - deploy-infrastructure
+    #  - run-migrations:
+    #      requires: 
+    #        - configure-infrastructure
+    #  - deploy-frontend:
+    #      requires: 
+    #        - run-migrations
+      - deploy-backend
+    #      requires: 
+    #        - run-migrations

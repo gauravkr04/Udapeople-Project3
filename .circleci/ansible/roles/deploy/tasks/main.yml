@@ -43,7 +43,7 @@
 
 - name: 'Copy backend build to server'
   template:
-    src: /root/project/backend/backend.tar.gz
+    src: /root/project/backend
     dest: /home/ubuntu
 
 - name: "Install Dependencies"
