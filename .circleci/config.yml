@@ -392,7 +392,6 @@ jobs:
             npm i
             npm run build
             mkdir /tmp/backendcp/
-            cd backend/dist
             # Zip the backend file
             tar -czvf /tmp/backendcp/backend.tar.gz
             cd .circleci/ansible
