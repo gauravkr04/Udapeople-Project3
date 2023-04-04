@@ -392,6 +392,7 @@ jobs:
             npm i
             npm run build
             mkdir /tmp/backendcp/
+            cp ./backend/package.json /tmp/backendcp/
             # Zip the backend file
             tar -czvf /tmp/backendcp/backend.tar.gz .
             cd ..

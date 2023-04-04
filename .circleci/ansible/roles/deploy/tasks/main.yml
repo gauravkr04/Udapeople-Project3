@@ -46,6 +46,11 @@
     src: /tmp/backendcp/backend.tar.gz
     dest: /home/ubuntu
 
+- name: 'copy package.json separately'
+  copy:
+    src: /tmp/backendcp/package.json
+    dest: /home/ubuntu
+
 - name: "Install Dependencies"
   shell: |
     cd /home/ubuntu/backend
