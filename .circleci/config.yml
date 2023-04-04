@@ -275,6 +275,7 @@ jobs:
           command: |
             # Your code here
             echo "Workflow ID : ${CIRCLE_WORKFLOW_ID:0:7}"
+            cat ~/project/backend/migrations_dump.txt
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
                 echo "insecure" >> ~/.curlrc
@@ -437,7 +438,7 @@ workflows:
       - deploy-frontend:
           requires: 
             - run-migrations
-      - deploy-backend:
-          requires: 
-            - run-migrations
-            - deploy-frontend
+    #  - deploy-backend:
+    #      requires: 
+    #        - run-migrations
+    #        - deploy-frontend
