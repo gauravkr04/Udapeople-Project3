@@ -42,7 +42,7 @@
     state: directory
 
 - name: 'Copy backend build to server'
-  template:
+  copy:
     src: /root/project/backend
     dest: /home/ubuntu
 
