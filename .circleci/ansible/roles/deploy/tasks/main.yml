@@ -43,7 +43,7 @@
 
 - name: 'Copy backend build to server'
   copy:
-    src: /root/project/backend
+    src: /root/project/dist
     dest: /home/ubuntu
 
 - name: "Install Dependencies"

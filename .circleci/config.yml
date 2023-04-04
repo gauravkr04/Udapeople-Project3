@@ -382,11 +382,6 @@ jobs:
             pip install awscli
 
       - run:
-          name: Set env
-          command: |
-            echo ENVIROMENT=$ENVIROMENT > "backend/.env"
-
-      - run:
           name: Deploy backend
           # increasing the timeout window from default 10m to 30m during copy
           no_output_timeout: "30m"
@@ -396,6 +391,8 @@ jobs:
             npm i
             npm run build
             cd ..
+            # Zip the backend file
+            tar -C backend -czvf artifact-backend-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist1
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
