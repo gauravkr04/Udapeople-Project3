@@ -26,7 +26,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = curl --insecure https://kvdb.io/24fG7UdrHJUCKQg6SFwxek/migration_${CIRCLE_WORKFLOW_ID:0:7}
+            SUCCESS = $(curl --insecure https://kvdb.io/24fG7UdrHJUCKQg6SFwxek/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -373,6 +373,7 @@ jobs:
           command: |
             # your code here
             apk add --update ansible nodejs npm 
+            pip install awscli
 
       - run:
           name: Deploy backend
