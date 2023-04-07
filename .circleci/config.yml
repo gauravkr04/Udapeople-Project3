@@ -240,7 +240,7 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
 
       # Here's where you will add some code to rollback on failure 
-    #  - destroy-environment     
+      - destroy-environment     
 
 
 #****************************************************#
@@ -403,9 +403,39 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
 
       # Here's where you will add some code to rollback on failure  
-    #  - revert-migrations
-    #  - destroy-environment
+      - revert-migrations
+      - destroy-environment
 
+#****************************************************#
+#            3. SMOKE TEST PHASE                     #
+#****************************************************#
+
+  smoke-test:
+    docker:
+      # Lightweight Docker image 
+      - image: python:3.11-rc-alpine
+    steps:
+      # Checkout code from git
+      - checkout 
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            apk add --update npm nodejs curl
+            pip install awscli
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+      - run:
+          name: Backend smoke test.
+          command: |
+            # your code here
+      - run:
+          name: Frontend smoke test.
+          command: |
+            # your code here
+      # Here's where you will add some code to rollback on failure 
 
 workflows:
   default:

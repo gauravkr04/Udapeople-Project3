@@ -42,20 +42,13 @@
     state: directory
 
 - name: 'Copy backend build to server'
-  ansible.builtin.unarchive:
+  unarchive:
     src: /tmp/backendcp/backend.tar.gz
-    dest: /home/ubuntu/backend
-
-- name: "Install Dependencies"
-  shell: |
-    cd /home/ubuntu/backend
-    npm install -g n
-    n 13.8.0
-    chown -R ubuntu:ubuntu /home/ubuntu/backend
+    dest: /home/ubuntu
 
 - name: "Build Package"
   shell: |
-    cd /home/ubuntu/backend
+    npm i
     npm run build
 
 - name: "start web server"
