@@ -452,7 +452,7 @@ jobs:
             then
                 return 0
             else
-  	            return 1
+                return 1
             fi
       - run:
           name: Frontend smoke test.
@@ -464,7 +464,7 @@ jobs:
             echo ${Frontend_URL} 
             if curl -s ${Frontend_URL} | grep "Welcome"
             then
-	             # Change this to 0 after the job fails
+            # Change this to 0 after the job fails
                return 1
             else
                return 1
