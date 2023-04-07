@@ -42,14 +42,9 @@
     state: directory
 
 - name: 'Copy backend build to server'
-  copy:
+  ansible.builtin.unarchive:
     src: /tmp/backendcp/backend.tar.gz
-    dest: /home/ubuntu
-
-- name: 'copy package.json separately'
-  copy:
-    src: /tmp/backendcp/package.json
-    dest: /home/ubuntu
+    dest: /home/ubuntu/backend
 
 - name: "Install Dependencies"
   shell: |
