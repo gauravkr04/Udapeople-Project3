@@ -502,48 +502,89 @@ jobs:
       - revert-migrations
       - destroy-environment
 
+#****************************************************#
+#             6. CLEAN UP   PHASE                    #
+#****************************************************#
+  cleanup:
+    docker:
+      # Docker image here
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Get old stack workflow id
+          command: |
+            # your code here
+            export OldWorkflowID=$(aws cloudformation \
+                                   list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                                   --no-paginate --output text)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CurrentWorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
+            # Fetch the Stack Name 
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                             --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}"    
+
+      - run:
+          name: Remove old stacks and files
+          command: |
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}"  ]]
+            then
+              # your code here
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              echo "Old stack has been deleted successfully!!"
+            else
+              echo "No old stack to delete"
+            fi
+
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-            - test-frontend
-      - scan-backend:
-         requires:
-            - build-backend
-            - test-backend
-      - deploy-infrastructure:
-          requires: 
-            - test-frontend
-            - test-backend
-            - scan-frontend
-            - scan-backend
-      - configure-infrastructure:
-          requires: 
-            - deploy-infrastructure
-      - run-migrations:
-          requires: 
-            - configure-infrastructure
-      - deploy-frontend:
-          requires: 
-            - run-migrations
-      - deploy-backend:
-          requires: 
-            - run-migrations
-            - deploy-frontend
-      - smoke-test:
-          requires:
-            - deploy-frontend
-            - deploy-backend
-      - cloudfront-update:
-          requires: 
-            - smoke-test
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires:
+      #       - build-frontend
+      # - test-backend:
+      #     requires:
+      #       - build-backend
+      # - scan-frontend:
+      #     requires:
+      #       - build-frontend
+      #       - test-frontend
+      # - scan-backend:
+      #    requires:
+      #       - build-backend
+      #       - test-backend
+      # - deploy-infrastructure:
+      #     requires: 
+      #       - test-frontend
+      #       - test-backend
+      #       - scan-frontend
+      #       - scan-backend
+      # - configure-infrastructure:
+      #     requires: 
+      #       - deploy-infrastructure
+      # - run-migrations:
+      #     requires: 
+      #       - configure-infrastructure
+      # - deploy-frontend:
+      #     requires: 
+      #       - run-migrations
+      # - deploy-backend:
+      #     requires: 
+      #       - run-migrations
+      #       - deploy-frontend
+      # - smoke-test:
+      #     requires:
+      #       - deploy-frontend
+      #       - deploy-backend
+      # - cloudfront-update:
+      #     requires: 
+      #       - smoke-test
+      - cleanup
+          # requires:
+          #   - cloudfront-update
