@@ -433,7 +433,7 @@ jobs:
             pip install awscli
 
       - run:
-          name: Get backend url
+          name: Get backend url and smoke test
           command: |
             # your code here
             cd .circleci/ansible
@@ -442,12 +442,7 @@ jobs:
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-
-      - run:
-          name: Backend smoke test.
-          command: |
             # your code here
-            echo curl "${API_URL}/api/status"
             if curl "${API_URL}/api/status" | grep "ok"
             then
                 return 0
