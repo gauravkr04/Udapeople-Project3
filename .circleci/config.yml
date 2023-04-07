@@ -540,48 +540,48 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires:
-      #       - build-frontend
-      # - test-backend:
-      #     requires:
-      #       - build-backend
-      # - scan-frontend:
-      #     requires:
-      #       - build-frontend
-      #       - test-frontend
-      # - scan-backend:
-      #    requires:
-      #       - build-backend
-      #       - test-backend
-      # - deploy-infrastructure:
-      #     requires: 
-      #       - test-frontend
-      #       - test-backend
-      #       - scan-frontend
-      #       - scan-backend
-      # - configure-infrastructure:
-      #     requires: 
-      #       - deploy-infrastructure
-      # - run-migrations:
-      #     requires: 
-      #       - configure-infrastructure
-      # - deploy-frontend:
-      #     requires: 
-      #       - run-migrations
-      # - deploy-backend:
-      #     requires: 
-      #       - run-migrations
-      #       - deploy-frontend
-      # - smoke-test:
-      #     requires:
-      #       - deploy-frontend
-      #       - deploy-backend
-      # - cloudfront-update:
-      #     requires: 
-      #       - smoke-test
-      - cleanup
-          # requires:
-          #   - cloudfront-update
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - scan-frontend:
+          requires:
+            - build-frontend
+            - test-frontend
+      - scan-backend:
+         requires:
+            - build-backend
+            - test-backend
+      - deploy-infrastructure:
+          requires: 
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
+      - configure-infrastructure:
+          requires: 
+            - deploy-infrastructure
+      - run-migrations:
+          requires: 
+            - configure-infrastructure
+      - deploy-frontend:
+          requires: 
+            - run-migrations
+      - deploy-backend:
+          requires: 
+            - run-migrations
+            - deploy-frontend
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend
+      - cloudfront-update:
+          requires: 
+            - smoke-test
+      - cleanup:
+          requires:
+            - cloudfront-update
