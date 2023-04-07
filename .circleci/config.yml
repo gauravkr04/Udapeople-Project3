@@ -438,7 +438,7 @@ jobs:
             # your code here
             cd .circleci/ansible
             cat inventory.txt 
-            export BACKEND_IP= $(cat inventory.txt | tail -1)
+            export BACKEND_IP= $(cat inventory.txt | sed 1d)
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
