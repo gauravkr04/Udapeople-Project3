@@ -56,7 +56,7 @@
 - name: "Install Dependencies"
   shell: |
     cd /home/ubuntu/backend
-    npm install
+    npm install --production
 
 - name: "Build Package"
   shell: |
