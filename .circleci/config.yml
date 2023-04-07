@@ -380,7 +380,7 @@ jobs:
           command: |
             # your code here
             apk add --update ansible nodejs curl
-            apk add --update npm -g n
+            apk add --update npm -u
             pip install awscli
 
       - run:
