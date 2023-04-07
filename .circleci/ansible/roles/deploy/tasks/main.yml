@@ -45,18 +45,18 @@
   copy:
     src: /tmp/backendcp/backend.tar.gz
     dest: /home/ubuntu
-    owner: ubuntu
 
 - name: 'copy package.json separately'
   copy:
     src: /tmp/backendcp/package.json
     dest: /home/ubuntu
-    owner: ubuntu
 
 - name: "Install Dependencies"
   shell: |
     cd /home/ubuntu/backend
-    npm install
+    npm install -g n
+    n 13.8.0
+    chown -R ubuntu:ubuntu /home/ubuntu/backend
 
 - name: "Build Package"
   shell: |
