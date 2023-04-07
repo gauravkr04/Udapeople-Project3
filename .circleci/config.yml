@@ -483,7 +483,7 @@ jobs:
           command: |
             # your code here
             yum install -y tar gzip
-            pip install awscli
+            yum install awscli
       - run:
           name: Update cloudfront distribution
           command: |
