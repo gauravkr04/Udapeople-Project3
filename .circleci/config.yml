@@ -30,7 +30,7 @@ commands:
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             SUCCESS=$(curl --insecure https://kvdb.io/Bjxqxe6Te8k9RVfMbT49bm/migration_${CIRCLE_WORKFLOW_ID:0:7})
-            if(( $SUCCESS==1 )); 
+            if(( $SUCCESS==1 ))
             then
               cd ~/project/backend
               npm install
@@ -197,6 +197,7 @@ jobs:
             echo "[web]" > inventory.txt
             aws ec2 describe-instances \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
+            --filter "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --output text >> inventory.txt
             cat inventory.txt
             # exit 1
@@ -327,7 +328,7 @@ jobs:
           name: Get backend url
           command: |
             # your code here
-            export BACKEND_IP=$(aws ec2 describe-instances --filter "Name=tag:project,Values=udapeople" --query Reservations[*].Instances[*].PublicIpAddress --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances --filter "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query Reservations[*].Instances[*].PublicIpAddress --output text)
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
