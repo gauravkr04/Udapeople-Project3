@@ -31,7 +31,7 @@ commands:
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
             # SUCCESS=`curl --insecure https://kvdb.io/Bjxqxe6Te8k9RVfMbT49bm/migration_${CIRCLE_WORKFLOW_ID:0:7}`
             # if(( $SUCCESS=='1' ))
-            if curl "--insecure https://kvdb.io/Bjxqxe6Te8k9RVfMbT49bm/migration_f2f0631" | grep "1"
+            if curl --insecure https://kvdb.io/Bjxqxe6Te8k9RVfMbT49bm/migration_f2f0631 | grep "1"
             then
               cd ~/project/backend
               npm install
@@ -435,8 +435,8 @@ jobs:
           name: Get backend url and smoke test
           command: |
             # your code here
-            cat .circleci/ansible/inventory.txt
-            export BACKEND_IP=$(cat .circleci/ansible/inventory.txt | sed 1d)
+            cat .circleci/ansible/inventory1.txt
+            export BACKEND_IP=$(cat .circleci/ansible/inventory1.txt | sed 1d)
             echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
